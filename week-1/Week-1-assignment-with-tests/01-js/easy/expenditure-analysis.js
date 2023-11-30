@@ -8,8 +8,32 @@
   - `npm run test-expenditure-analysis`
 */
 
+var transactions = [
+  {
+    itemName: "pepsi",
+    category: "Drink",
+    price: "20",
+    timstamp: "12-june-2022",
+  },
+  {
+    itemName: "mirinda",
+    category: "Drink",
+    price: "25",
+    timstamp: "13-june-2022",
+  },
+];
 function calculateTotalSpentByCategory(transactions) {
-  return [];
+  var spendEstimates = {};
+  for (var i = 0; i < transactions.length; i++) {
+    var transaction = transactions[i];
+    spendEstimates["Drink"];
+    if (spendEstimates[transaction.category]) {
+      spendEstimates[transaction.category] += parseFloat(transaction.price);
+    } else {
+      spendEstimates[transaction.category] = parseFloat(transaction.price);
+    }
+    console.log(spendEstimates);
+  }
 }
 
 module.exports = calculateTotalSpentByCategory;
