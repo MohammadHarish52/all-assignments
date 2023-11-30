@@ -44,16 +44,16 @@ const bodyParser = require("body-parser");
 
 let todos = [];
 port = 3000;
-
 const app = express();
+app.use(bodyParser.json());
 
 // 1.GET /todos - Retrieve all todo items
 //   Description: Returns a list of all todo items.
 //   Response: 200 OK with an array of todo items in JSON format.
 //   Example: GET http://localhost:3000/todos
 
-app.get("/todos", (res, req) => {
-  res.send(todos);
+app.get("/todos", (req, res) => {
+  res.json(todos);
 });
 
 //  2.GET /todos/:id - Retrieve a specific todo item by ID
@@ -61,7 +61,7 @@ app.get("/todos", (res, req) => {
 //     Response: 200 OK with the todo item in JSON format if found, or 404 Not Found if not found.
 //     Example: GET http://localhost:3000/todos/123
 
-app.get("/todos/:id", (res, req) => {
+app.get("/todos/:id", (req, res) => {
   let todoItem = todos.findIndex((t) => t.id === parseInt(req.params.id));
   if (!todoItem) {
     res.status(404).send({ message: "Todo Item not found!" });
@@ -84,7 +84,7 @@ app.post("/todos", (req, res) => {
     description: req.body.description,
   };
   todos.push(todo);
-  res.status(201).json(todo.id);
+  res.status(201).json(todo);
 });
 
 // 4. PUT /todos/:id - Update an existing todo item by ID
@@ -94,9 +94,9 @@ app.post("/todos", (req, res) => {
 //   Example: PUT http://localhost:3000/todos/123
 //   Request Body: { "title": "Buy groceries", "completed": true }
 
-app.put("/todos/:id", (res, req) => {
+app.put("/todos/:id", (req, res) => {
   let updateTodo = todos.findIndex((t) => t.id === parseInt(req.params.id));
-  if (!updateTodo) {
+  if (updateTodo === -1) {
     res.status(404).send({ message: "Not found" });
   } else {
     todos[updateTodo].title = req.body.title;
@@ -110,9 +110,9 @@ app.put("/todos/:id", (res, req) => {
 //     Response: 200 OK if the todo item was found and deleted, or 404 Not Found if not found.
 //     Example: DELETE http://localhost:3000/todos/123
 
-app.delete("/todos/:id", (res, req) => {
+app.delete("/todos/:id", (req, res) => {
   let deleteItemid = todos.findIndex((t) => t.id === parseInt(req.params.id));
-  if (!deleteItemid) {
+  if (deleteItemid === -1) {
     res.status(404).send({ message: "Not found" });
   } else {
     todos.splice(deleteItemid, 1);
@@ -120,7 +120,10 @@ app.delete("/todos/:id", (res, req) => {
   }
 });
 
-app.use(bodyParser.json());
+// for all other routes, return 404
+app.use((req, res, next) => {
+  res.status(404).send();
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
